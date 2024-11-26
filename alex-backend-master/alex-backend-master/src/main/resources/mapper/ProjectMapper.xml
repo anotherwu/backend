@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.alex.platform.mapper.ProjectMapper">
+
+    <resultMap id="moduleDO" type="org.alex.platform.pojo.ModuleDO">
+        <id column="module_id" property="moduleId"/>
+        <result column="mname" property="name"/>
+        <result column="mdesc" property="desc"/>
+        <result column="mcreated_time" property="createdTime"/>
+        <result column="mupdate_time" property="updateTime"/>
+        <association property="projectId" column="project_id" javaType="org.alex.platform.pojo.ProjectDO"/>
+    </resultMap>
+
+    <resultMap id="projectVO" type="org.alex.platform.pojo.ProjectVO">
+        <id column="project_id" property="projectId"/>
+        <result column="name" property="name"/>
+        <result column="desc" property="desc"/>
+        <result column="domain" property="domain"/>
+        <result column="dev_domain" property="devDomain"/>
+        <result column="test_domain" property="testDomain"/>
+        <result column="stg_domain" property="stgDomain"/>
+        <result column="prod_domain" property="prodDomain"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="modules" ofType="org.alex.platform.pojo.ModuleDO" resultMap="moduleDO"/>
+    </resultMap>
+
+    <select id="checkName" resultType="org.alex.platform.pojo.ProjectDO" parameterType="org.alex.platform.pojo.ProjectDO">
+        select `project_id`, `name`, `desc`, `domain`, `created_time`, `update_time`
+        from t_project
+        where `project_id`!=#{projectId} and `name`=#{name}
+    </select>
+
+    <select id="selectModulesById" resultMap="projectVO" parameterType="Integer">
+        select p.project_id, p.name, p.desc, p.domain, p.created_time, p.update_time, m.module_id, m.name mname,
+        m.desc mdesc, m.created_time mcreated_time, m.update_time mupdate_time
+        from t_project as p LEFT JOIN t_module as m on m.project_id = p.project_id
+        <where>
+            p.project_id = #{projectId}
+        </where>
+    </select>
+
+    <sql id="query_all">
+                select `project_id`, `name`, `desc`,
+                `domain`, `protocol`, `port`,
+                `dev_domain`, `dev_protocol`, `dev_port`,
+                `test_domain`, `test_protocol`, `test_port`,
+                `stg_domain`, `stg_protocol`, `stg_port`,
+                `prod_domain`, `prod_protocol`, `prod_port`,
+                `created_time`, `update_time`
+        from t_project
+        <where>
+            <if test="projectId != null">`project_id` = #{projectId}</if>
+            <if test="name != null">and `name` like concat("%", #{name}, "%")</if>
+            <if test="domain != null">and `domain` like concat('%',#{domain},'%')</if>
+        </where>
+    </sql>
+    <sql id="query_one">
+        select `project_id`, `name`, `desc`,
+        `domain`, `protocol`, `port`,
+        `dev_domain`, `dev_protocol`, `dev_port`,
+        `test_domain`, `test_protocol`, `test_port`,
+        `stg_domain`, `stg_protocol`, `stg_port`,
+        `prod_domain`, `prod_protocol`, `prod_port`,
+        `created_time`, `update_time`
+        from t_project
+        where `project_id` = #{projectId}
+    </sql>
+    <select id="selectProjectList" resultType="org.alex.platform.pojo.ProjectDO" parameterType="org.alex.platform.pojo.ProjectDO">
+        <include refid="query_all"/>
+    </select>
+    <select id="selectProject" resultType="org.alex.platform.pojo.ProjectDO" parameterType="org.alex.platform.pojo.ProjectDO">
+        <include refid="query_one"/>
+    </select>
+    <select id="selectProjectById" resultType="org.alex.platform.pojo.ProjectVO" parameterType="Integer">
+        <include refid="query_one"/>
+    </select>
+    <insert id="insertProject" parameterType="org.alex.platform.pojo.ProjectDO">
+        insert into t_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">`name`,</if>
+            <if test="desc != null">`desc`,</if>
+
+            <if test="domain != null">`domain`,</if>
+            <if test="protocol != null">`protocol`,</if>
+            <if test="port != null">`port`,</if>
+
+            <if test="devDomain != null">`dev_domain`,</if>
+            <if test="devProtocol != null">`dev_protocol`,</if>
+            <if test="devPort != null">`dev_port`,</if>
+
+            <if test="testDomain != null">`test_domain`,</if>
+            <if test="testProtocol != null">`test_protocol`,</if>
+            <if test="testPort != null">`test_port`,</if>
+
+            <if test="stgDomain != null">`stg_domain`,</if>
+            <if test="stgProtocol != null">`stg_protocol`,</if>
+            <if test="stgPort != null">`stg_port`,</if>
+
+            <if test="prodDomain != null">`prod_domain`,</if>
+            <if test="prodProtocol != null">`prod_protocol`,</if>
+            <if test="prodPort != null">`prod_port`,</if>
+
+            <if test="createdTime != null">`created_time`,</if>
+            <if test="updateTime != null">`update_time`,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="desc != null">#{desc},</if>
+
+            <if test="domain != null">#{domain},</if>
+            <if test="protocol != null">#{protocol},</if>
+            <if test="port != null">#{port},</if>
+
+            <if test="devDomain != null">#{devDomain},</if>
+            <if test="devProtocol != null">#{devProtocol},</if>
+            <if test="devPort != null">#{devPort},</if>
+
+            <if test="testDomain != null">#{testDomain},</if>
+            <if test="testProtocol != null">#{testProtocol},</if>
+            <if test="testPort != null">#{testPort},</if>
+
+            <if test="stgDomain != null">#{stgDomain},</if>
+            <if test="stgProtocol != null">#{stgProtocol},</if>
+            <if test="stgPort != null">#{stgPort},</if>
+
+            <if test="prodDomain != null">#{prodDomain},</if>
+            <if test="prodProtocol != null">#{prodProtocol},</if>
+            <if test="prodPort != null">#{prodPort},</if>
+
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+    <update id="updateProject" parameterType="org.alex.platform.pojo.ProjectDO">
+        update t_project
+        <set>
+            `name`=#{name},
+            `desc`=#{desc},
+
+            `domain`=#{domain},
+            `protocol`=#{protocol},
+            `port`=#{port},
+
+            `dev_domain`=#{devDomain},
+            `dev_protocol`=#{devProtocol},
+            `dev_port`=#{devPort},
+
+            `test_domain`=#{testDomain},
+            `test_protocol`=#{testProtocol},
+            `test_port`=#{testPort},
+
+            `stg_domain`=#{stgDomain},
+            `stg_protocol`=#{stgProtocol},
+            `stg_port`=#{stgPort},
+
+            `prod_domain`=#{prodDomain},
+            `prod_protocol`=#{prodProtocol},
+            `prod_port`=#{prodPort},
+
+            `update_time`=#{updateTime},
+        </set>
+        where `project_id` = #{projectId}
+    </update>
+    <delete id="deleteProjectById" parameterType="int">
+        delete from t_project where project_id = #{projectId}
+    </delete>
+
+</mapper>

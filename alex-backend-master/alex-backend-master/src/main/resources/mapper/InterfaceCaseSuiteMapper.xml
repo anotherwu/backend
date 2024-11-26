@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.alex.platform.mapper.InterfaceCaseSuiteMapper">
+    <insert id="insertInterfaceCaseSuite" parameterType="org.alex.platform.pojo.InterfaceCaseSuiteDO" useGeneratedKeys="true" keyProperty="suiteId">
+        insert into `t_interface_case_suite`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="suiteName!=null">`suite_name`,</if>
+            <if test="desc!=null">`desc`,</if>
+            <if test="createdTime!=null">`created_time`,</if>
+            <if test="updateTime!=null">`update_time`,</if>
+            <if test="creator!=null">`creator`,</if>
+            <if test="executeType!=null">`execute_type`,</if>
+            <if test="runDev!=null">`run_dev`,</if>
+            <if test="isRetry!=null">`is_retry`,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="suiteName!=null">#{suiteName},</if>
+            <if test="desc!=null">#{desc},</if>
+            <if test="createdTime!=null">#{createdTime},</if>
+            <if test="updateTime!=null">#{updateTime},</if>
+            <if test="creator!=null">#{creator},</if>
+            <if test="executeType!=null">#{executeType},</if>
+            <if test="runDev!=null">#{runDev},</if>
+            <if test="isRetry!=null">#{isRetry},</if>
+        </trim>
+    </insert>
+    <update id="updateInterfaceCaseSuite" parameterType="org.alex.platform.pojo.InterfaceCaseSuiteDO">
+        update `t_interface_case_suite`
+        <set>
+            `suite_name`=#{suiteName},
+            `desc`=#{desc},
+            `created_time`=#{createdTime},
+            `update_time`=#{updateTime},
+            `execute_type`=#{executeType},
+            `run_dev`=#{runDev},
+            `is_retry`=#{isRetry},
+        </set>
+        where `suite_id` = #{suiteId}
+    </update>
+    <delete id="deleteInterfaceCaseSuiteById" parameterType="Integer">
+        delete from `t_interface_case_suite` where `suite_id` = #{suiteId};
+    </delete>
+    <select id="selectInterfaceCaseSuiteById" parameterType="Integer" resultType="org.alex.platform.pojo.InterfaceCaseSuiteVO">
+        select `suite_id`,`suite_name`,`desc`,`created_time`,`update_time`,`creator`,`execute_type`, `run_dev`, `is_retry`
+        from `t_interface_case_suite`
+        where `suite_id` = #{suiteId}
+    </select>
+    <select id="selectInterfaceCaseSuite" parameterType="org.alex.platform.pojo.InterfaceCaseSuiteVO" resultType="org.alex.platform.pojo.InterfaceCaseSuiteVO">
+        select `suite_id`,`suite_name`,`desc`,`created_time`,`update_time`,`creator`,`execute_type`, `run_dev`, `is_retry`
+        from `t_interface_case_suite`
+        <where>
+            <if test="suiteId!=null">and `suite_id`=#{suiteId}</if>
+            <if test="suiteName!=null">and `suite_name` like concat('%',#{suiteName},'%')</if>
+            <if test="desc!=null">and `desc` like concat('%',#{desc},'%')</if>
+            <if test="createdTime!=null">and `created_time` &gt;= #{createdTime}</if>
+            <if test="updateTime!=null">and `update_time` &lt;= #{updateTime}</if>
+            <if test="creator!=null">and `creator` like concat('%',#{creator},'%')</if>
+            <if test="executeType!=null">and `execute_type`=#{executeType}</if>
+            <if test="runDev!=null">and `run_dev`=#{runDev}</if>
+            <if test="isRetry!=null">and `is_retry`=#{isRetry}</if>
+        </where>
+    </select>
+
+    <resultMap id="suiteInfo" type="org.alex.platform.pojo.InterfaceSuiteInfoVO">
+        <result column="suite_id" property="suiteId"></result>
+        <result column="suite_name" property="suiteName"></result>
+        <result column="desc" property="desc"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="update_time" property="updateTime"></result>
+        <result column="creator" property="creator"></result>
+        <result column="execute_type" property="executeType"></result>
+        <result column="run_dev" property="runDev"></result>
+        <result column="is_retry" property="isRetry"></result>
+        <collection property="suiteProcessors" ofType="org.alex.platform.pojo.InterfaceSuiteProcessorVO">
+            <id column="id" property="id"></id>
+            <result column="processor_suite_id" property="suiteId"></result>
+            <result column="processor_type" property="processorType"></result>
+            <result column="type" property="type"></result>
+            <result column="processor_desc" property="desc"></result>
+            <result column="value" property="value"></result>
+            <result column="processor_created_time" property="createdTime"></result>
+            <result column="processor_update_time" property="updateTime"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectInterfaceCaseSuiteInfoById" parameterType="Integer" resultMap="suiteInfo">
+        select `suite`.`suite_id`,`suite`.`suite_name`,`suite`.`desc`,`suite`.`created_time`,`suite`.`update_time`,
+        `suite`.`creator`,`suite`.`execute_type`, `suite`.`run_dev`, `suite`.`is_retry`,
+        `processor`.`id`,`processor`.`suite_id` as `processor_suite_id`,`processor`.`processor_type`,`processor`.`type`,
+        `processor`.`desc` as `processor_desc`, `processor`.`value`,
+        `processor`.`created_time` as `processor_created_time`,`processor`.`update_time` as `processor_update_time`
+        from `t_interface_case_suite` as `suite`
+        LEFT JOIN `t_interface_suite_processor` as `processor` on `suite`.`suite_id` = `processor`.`suite_id`
+        where `suite`.`suite_id` = #{suiteId}
+    </select>
+</mapper>

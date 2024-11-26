@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.alex.platform.mapper.RoleMapper">
+    <select id="selectRoleById" parameterType="Integer" resultType="org.alex.platform.pojo.RoleVO">
+        select `role_id`, `role_name`, `status`
+        from `t_role`
+        where `role_id`=#{roleId}
+    </select>
+    <select id="selectRole" parameterType="org.alex.platform.pojo.RoleDTO" resultType="org.alex.platform.pojo.RoleVO">
+        select `role_id`, `role_name`, `status`
+        from `t_role`
+        <where>
+            <if test="roleId != null">and `role_id`=#{roleId}</if>
+            <if test="roleName != null">and `role_name`=#{roleName}</if>
+            <if test="status != null">and `status`=#{status}</if>
+        </where>
+    </select>
+    <select id="checkRoleNameRepeat" parameterType="org.alex.platform.pojo.RoleDTO" resultType="org.alex.platform.pojo.RoleVO">
+        select `role_id`, `role_name`, `status`
+        from `t_role`
+        where `role_id` != #{roleId} and `role_name` = #{roleName}
+    </select>
+    <insert id="insertRole" parameterType="org.alex.platform.pojo.RoleDO">
+        insert into `t_role`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            `role_name`, `status`,
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            #{roleName}, #{status}
+        </trim>
+    </insert>
+    <update id="updateRole" parameterType="org.alex.platform.pojo.RoleDO">
+        update `t_role`
+        <set>
+            `role_name`=#{roleName},`status`=#{status},
+        </set>
+        where `role_id` = #{roleId}
+    </update>
+    <delete id="deleteRoleById" parameterType="Integer">
+        delete from `t_role`
+        where `role_id` = #{roleId}
+    </delete>
+
+    <delete id="deletePermissionRoleRef" parameterType="Integer">
+        delete from `t_permission_role_ref`
+        where `permission_id` = #{permissionId}
+    </delete>
+    <select id="selectPermissionIdArrayByRoleId" parameterType="Integer" resultType="Integer">
+        select `permission_id`
+        from `t_permission_role_ref`
+        where `role_id` = #{roleId}
+    </select>
+    <select id="selectPermissionCodeArrayByRoleId" parameterType="Integer" resultType="String">
+        select `permission_code`
+        from `t_permission_role_ref` as `a`
+        left join `t_permission` as `b`
+        on `a`.`permission_id` = `b`.`id`
+        where `role_id` = #{roleId}
+    </select>
+    <select id="selectRolePermission" resultType="HashMap">
+        select `permission_id`, `role_id`, `Id`
+        from `t_permission_role_ref`
+        where `role_id` = #{roleId} and `permission_id` = #{permissionId}
+    </select>
+    <insert id="insertRolePermission">
+        insert into `t_permission_role_ref` (`role_id`,`permission_id`, `update_time`) values (#{roleId}, #{permissionId}, #{updateTime})
+    </insert>
+    <insert id="deleteRolePermission">
+        delete from `t_permission_role_ref`
+        where `role_id` = #{roleId} and `permission_id` = #{permissionId}
+    </insert>
+</mapper>

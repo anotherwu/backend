@@ -1,0 +1,75 @@
+{
+	"property": {
+		"url": "/user/register",
+		"method": "post",
+		"desc": "用户注册接口",
+		"doc": "",
+		"headers": "{\"Token\":\"${token}\"}",
+		"schemaType": "json",
+		"validEquivalenceClass": {
+			"caseLevel": "高",
+			"asserts": [
+				{
+					"order": 1,
+					"desc": "http状态码需等于200",
+					"type": "code",
+					"operator": "=",
+					"expect": 200
+				},
+				{
+					"order": 2,
+					"desc": "接口状态码需等于200",
+					"type": "json",
+					"expression": "$..code",
+					"operator": "=",
+					"expect": 200
+				}
+			]
+		},
+		"invalidEquivalenceClass": {
+			"caseLevel": "中",
+			"asserts": [
+				{
+					"order": 1,
+					"desc": "http状态码需等于200",
+					"type": "code",
+					"operator": "=",
+					"expect": 200
+				},
+				{
+					"order": 2,
+					"desc": "接口状态码不等于200",
+					"type": "json",
+					"expression": "$..code",
+					"operator": "!=",
+					"expect": 200
+				}
+			]
+		}
+	},
+	"schema": [
+		{
+			"name": "username",
+			"desc": "用户名",
+			"type": "NotInDb",
+			"config": {
+				"allowNull": false,
+				"dbId": 1,
+				"sql": "select username from t_user",
+				"elementType": "String"
+			}
+		},
+		{
+			"name": "password",
+			"desc": "密码",
+			"type": "String",
+			"config": {
+				"allowNull": false,
+				"allowIllegal": true,
+				"allowEmpty": false,
+				"minLen": 3,
+				"maxLen": 20
+			}
+		}
+	]
+}

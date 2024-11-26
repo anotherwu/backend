@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.alex.platform.mapper.InterfaceAssertLogMapper">
+   <insert id="insertInterfaceAssertLog" parameterType="org.alex.platform.pojo.InterfaceAssertLogDO">
+       insert into `t_interface_assert_log`
+       <trim prefix="(" suffix=")" suffixOverrides=",">
+           <if test="executeLogId != null">`execute_log_id`,</if>
+           <if test="caseId != null">`case_id`,</if>
+           <if test="assertName != null">`assert_name`,</if>
+           <if test="assertId != null">`assert_id`,</if>
+           <if test="type != null">`type`,</if>
+           <if test="expression != null">`expression`,</if>
+           <if test="operator != null">`operator`,</if>
+           <if test="exceptedResult != null">`excepted_result`,</if>
+           <if test="actualResult != null">`actual_result`,</if>
+           <if test="order != null">`order`,</if>
+           <if test="status != null">`status`,</if>
+           <if test="errorMessage != null">`error_message`,</if>
+           <if test="createdTime != null">`created_time`,</if>
+           <if test="rawExceptedResult != null">`raw_excepted_result`,</if>
+       </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides=",">
+           <if test="executeLogId != null">#{executeLogId},</if>
+           <if test="caseId != null">#{caseId},</if>
+           <if test="assertName != null">#{assertName},</if>
+           <if test="assertId != null">#{assertId},</if>
+           <if test="type != null">#{type},</if>
+           <if test="expression != null">#{expression},</if>
+           <if test="operator != null">#{operator},</if>
+           <if test="exceptedResult != null">#{exceptedResult},</if>
+           <if test="actualResult != null">#{actualResult},</if>
+           <if test="order != null">#{order},</if>
+           <if test="status != null">#{status},</if>
+           <if test="errorMessage != null">#{errorMessage},</if>
+           <if test="createdTime != null">#{createdTime},</if>
+           <if test="rawExceptedResult != null">#{rawExceptedResult},</if>
+       </trim>
+   </insert>
+   <select id="selectInterfaceAssertLogList" resultType="org.alex.platform.pojo.InterfaceAssertLogVO" parameterType="org.alex.platform.pojo.InterfaceAssertLogDO">
+       select `assert_log_id`,`execute_log_id`,`assert_name`,`assert_id`,`case_id`,`type`,`expression`,`operator`,
+       `excepted_result`,`order`,`actual_result`,`status`, `error_message`, `created_time`, `raw_excepted_result`
+       from `t_interface_assert_log`
+       <where>
+           <if test="assertLogId != null">and `assert_log_id` = #{assertLogId}</if>
+           <if test="executeLogId != null">and `execute_log_id` = #{executeLogId}</if>
+           <if test="caseId != null">and `case_id` = #{caseId}</if>
+           <if test="assertName != null">and `assert_name` like concat('%',#{assertName},'%')</if>
+           <if test="assertId != null">and `assert_id` = #{assertId}</if>
+           <if test="type != null">and `type` = #{type}</if>
+           <if test="expression != null">and `expression` = #{expression}</if>
+           <if test="operator != null">and `operator` = #{operator}</if>
+           <if test="exceptedResult != null">and `excepted_result` = #{exceptedResult}</if>
+           <if test="rawExceptedResult != null">and `raw_excepted_result` = #{rawExceptedResult}</if>
+           <if test="actualResult != null">and `actual_result` = #{actualResult}</if>
+           <if test="order != null">and `order` = #{order}</if>
+           <if test="status != null">and `status` = #{status}</if>
+           <if test="errorMessage != null">and `error_message` like concat('%',#{errorMessage},'%')</if>
+           <if test="createdStartTime != null">and `created_time` &gt;= #{createdStartTime}</if>
+           <if test="createdEndTime != null">and `created_time` &lt;= #{createdEndTime}</if>
+       </where>
+       order by `assert_log_id` desc
+   </select>
+    <select id="selectSuiteReportAssert" parameterType="String" resultType="java.util.HashMap">
+            select `assert_log`.`status`, count(*) as `count`
+            from `t_interface_case_execute_log` as `log`
+            inner JOIN `t_interface_assert_log` as `assert_log` on `log`.`id` = `assert_log`.`execute_log_id`
+            where `log`.`suite_log_no` = #{suiteLogNo} and `is_failed_retry` = 1 <!--忽略失败重跑的-->
+            group by `assert_log`.`status`
+            order by `assert_log`.`status` asc
+    </select>
+</mapper>

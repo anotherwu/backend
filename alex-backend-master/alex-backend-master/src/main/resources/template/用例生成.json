@@ -1,0 +1,42 @@
+{
+	"property": {
+		"url": "",
+		"method": "",
+		"desc": "",
+		"level": "",
+		"doc": "",
+		"headers": ""
+	},
+	"paramsSchema": [
+		{
+			"name": "",
+			"desc": "",
+			"type": "String、Number、Integer、Float、InDb、NotInDb、Const、InArray、NotInArray",
+			"globalConfig": {
+				"allowNull": true,
+			},
+			"stringConfig": {
+				"allowIllegal": true,
+				"allEmpty": true,
+				"minLen": 1,
+				"maxLen": 10
+			},
+			"numberConfig": {
+				"min": 1.0,
+				"max": 2.0
+			},
+			"dbConfig": {
+				"dbId": 1,
+				"sql":,
+				"elementType": "String、Number、Integer、Float、Double"
+			},
+			"constConfig": {
+				"value": "#{timestamp()}"
+			},
+			"AnyOfConfig": {
+				"value": [],
+				"elementType": "String、Number、Integer、Float、Double"
+			}
+		}
+	]
+}

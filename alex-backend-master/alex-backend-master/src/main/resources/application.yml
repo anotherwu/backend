@@ -1,0 +1,51 @@
+server:
+  port: 7777
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  mail:
+    host: smtp.163.com
+    port: 25
+    default-encoding: UTF-8
+    username: wjf_vv@163.com
+    password: JBgeFfiw4hTGsXSU
+
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/platform?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    parser:
+      allow_single_quotes: true
+      allow_unquoted_control_chars: true
+  redis:
+    # 需同步修改ort.py中的redis连接信息
+    host: localhost
+    port: 6379
+    timeout: 3000
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+logging:
+  file:
+    name: src/main/resources/log/log.log
+  level:
+    root: warn
+myself:
+  path:
+    readme: C:\alex\readme\
+    template: C:\alex\template\
+    stability-log-path: C:\alex\stability-log\
+    python-ort: C:\alex\py\ort.py
+
